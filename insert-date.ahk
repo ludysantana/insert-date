@@ -68,7 +68,7 @@ settingsGui() {
     Gui, Settings:Add, Button, xp+100 w85, Cancel
 
     loadSettingsToGui()
-    Gui, show, W500 H400 center, Manifold Date Settings
+    Gui, show, W500 H400 center, Insert Date Settings
 }
 ; GUI Actions
 settingsButtonOk() {
