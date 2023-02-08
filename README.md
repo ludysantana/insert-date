@@ -1,3 +1,9 @@
+# Quick Insert Date
+
+I have been using @CemraJC's em-n-en for a long time and found myself in a position where I need to constantly type out today's date in specific formats. I had zero autohotkey experience but wanted a standalone shortcut to insert today's date in "yyyy-MM-dd" or "yyyy.MM.dd" formats. This allows anyone to do that by typing the shortcuts "ymd-" or "ymd."
+
+Original README below:
+
 # Em-n-en
 
 > Em and En dash keyboard-ization –(^—^)–
