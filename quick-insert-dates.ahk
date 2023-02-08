@@ -11,7 +11,8 @@ settings := Object()
 
 ; Initialize Settings in the following way:
 ; array[key]   := ["Section", "Key", "Value"]
-settings["inl"] := ["Methods", "inline", true]
+settings["dash"] := ["Format", "dashseparated", true]
+settings["dott"] := ["Format", "dotseparated", false]
 settings["sww"] := ["General", "startup_run", false]
 
 if !FileExist(settings_file) {
@@ -50,11 +51,16 @@ settingsGui() {
     Gui, Settings:font, s8 c505050, Trebuchet MS
     Gui, Settings:Add, GroupBox, w455 h283, Standard Settings
     Gui, Settings:font, s10 c10101f, Trebuchet MS
-    Gui, Settings:Add, Text, Left w210 xp+12 yp+22, Method for Date Insertion:
+    Gui, Settings:Add, Text, Left w210 xp+12 yp+22, Format for Date Insertion:
 
-    Gui, Add, Checkbox, yp+25 vcheck_inline_method, Inline Replace
+    Gui, Add, Checkbox, yp+25 vcheck_dashseparated_format, Dash Separated
     Gui, Settings:font, s8 c808080, Trebuchet MS
     Gui, Settings:Add, Text, W400 yp+20, To insert date in the yyyy-MM-dd format, type "ymd-"
+    Gui, Settings:font, s10 c10101f, Trebuchet MS
+	
+	Gui, Add, Checkbox, yp+25 vcheck_dottseparated_format, Dot Separated
+    Gui, Settings:font, s8 c808080, Trebuchet MS
+    Gui, Settings:Add, Text, W400 yp+20, To insert date in the yyyy.MM.dd format, type "ymd."
     Gui, Settings:font, s10 c10101f, Trebuchet MS
 
     Gui, Settings:Add, Text, Left w210 yp+35, Other Settings:
@@ -83,13 +89,15 @@ settingsButtonApply(){
 }
 loadSettingsToGui(){
     global
-    GuiControl, Settings:, check_inline_method, % settings["inl"][3]
-    GuiControl, Settings:, check_start_with_windows, % settings["sww"][3]
+    GuiControl, Settings:, check_dashseparated_format, % settings["dash"][3]
+    GuiControl, Settings:, check_dottseparated_format, % settings["dott"][3]
+	GuiControl, Settings:, check_start_with_windows, % settings["sww"][3]
 }
 pullSettingsFromGui(){
     global
     Gui, Settings:Submit, NoHide
-    settings["inl"][3] := check_inline_method
+    settings["dash"][3] := check_dashseparated_format
+    settings["dott"][3] := check_dottseparated_format	
     settings["sww"][3] := check_start_with_windows
     save()
     update_sww_state(settings["sww"][3])
@@ -178,6 +186,14 @@ reset(){
     ExitApp
 }
 
+#If, settings["dash"][3]
 :*?:ymd-::
 FormatTime, CurrDate, A_now, yyyy-MM-dd
 Send, %CurrDate%
+return
+
+#If, settings["dott"][3]
+:*?:ymd.::
+FormatTime, CurrDate, A_now, yyyy.MM.dd
+Send, %CurrDate%
+return
