@@ -30,7 +30,7 @@ Menu, Tray, Add,
 Menu, Tray, Add, Reset, reset
 Menu, Tray, Add, Restart, restart
 Menu, Tray, Add, Exit, exit
-Menu, Tray, Tip, Type Manifold Dates
+Menu, Tray, Tip, Quick Insert Dates
 
 ; Define the settings GUI
 settingsGui() {
@@ -68,7 +68,7 @@ settingsGui() {
     Gui, Settings:Add, Button, xp+100 w85, Cancel
 
     loadSettingsToGui()
-    Gui, show, W500 H400 center, Manifold Date Settings
+    Gui, show, W500 H400 center, Insert Date Settings
 }
 ; GUI Actions
 settingsButtonOk() {
