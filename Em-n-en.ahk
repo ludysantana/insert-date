@@ -1,18 +1,17 @@
-SetWorkingDir %A_ScriptDir%
-SendMode Input
+#NoEnv	;
+;	#Warn	;
+SendMode Input	;
+SetWorkingDir %A_ScriptDir%	;
 #SingleInstance, force
-#NoEnv
 
 
-settings_file = Em-n-en_Settings.ini
-startup_shortcut := A_Startup . "\Em-n-en.lnk"
+settings_file = Mdate_Settings.ini
+startup_shortcut := A_Startup . "\Mdate.lnk"
 settings := Object()
 
 ; Initialize Settings in the following way:
 ; array[key]   := ["Section", "Key", "Value"]
-settings["mod"] := ["Methods", "modifiers", false]
 settings["inl"] := ["Methods", "inline", true]
-settings["hrd"] := ["Methods", "hard_replace", false]
 settings["sww"] := ["General", "startup_run", false]
 
 if !FileExist(settings_file) {
@@ -31,7 +30,7 @@ Menu, Tray, Add,
 Menu, Tray, Add, Reset, reset
 Menu, Tray, Add, Restart, restart
 Menu, Tray, Add, Exit, exit
-Menu, Tray, Tip, Em-n-en - Type En and Em dashes
+Menu, Tray, Tip, Type Manifold Dates
 
 ; Define the settings GUI
 settingsGui() {
@@ -43,29 +42,19 @@ settingsGui() {
 
     ; Title and Copyright
     Gui, Settings:font, s18, Arial
-    Gui, Settings:Add, Text, Center W475, Em-n-en Settings
+    Gui, Settings:Add, Text, Center W475, Insert Date Settings
     Gui, Settings:font, s8 c808080, Trebuchet MS
-    Gui, Settings:Add, Text, Center W475 yp+26, Copyright (c) 2016 Jason Cemra
+    Gui, Settings:Add, Text, Center W475 yp+26, Copyright (c) 2016 Jason Cemra (Em-n-en Script)
 
     ; Standard Settings
     Gui, Settings:font, s8 c505050, Trebuchet MS
     Gui, Settings:Add, GroupBox, w455 h283, Standard Settings
     Gui, Settings:font, s10 c10101f, Trebuchet MS
-    Gui, Settings:Add, Text, Left w210 xp+12 yp+22, Method for Dash Insertion:
-
-    Gui, Add, Checkbox, yp+25 vcheck_modifier_method, Modifier Keys
-    Gui, Settings:font, s8 c808080, Trebuchet MS
-    Gui, Settings:Add, Text, W400 yp+20, En Dash: Ctrl + Shift + "-" and Em Dash: En Dash: Ctrl + Shift + Alt + "-"
-    Gui, Settings:font, s10 c10101f, Trebuchet MS
+    Gui, Settings:Add, Text, Left w210 xp+12 yp+22, Method for Date Insertion:
 
     Gui, Add, Checkbox, yp+25 vcheck_inline_method, Inline Replace
     Gui, Settings:font, s8 c808080, Trebuchet MS
-    Gui, Settings:Add, Text, W400 yp+20, En Dash, type: "--=" and Em Dash, type: "==-"
-    Gui, Settings:font, s10 c10101f, Trebuchet MS
-
-    Gui, Add, Checkbox, yp+25 vcheck_hard_replace_method, Hard Replace
-    Gui, Settings:font, s8 c808080, Trebuchet MS
-    Gui, Settings:Add, Text, W400 yp+20, Not Recommended. Will replace "-" with En Dash if not directly next to a letter.
+    Gui, Settings:Add, Text, W400 yp+20, To insert date in the yyyy-MM-dd format, type "ymd-"
     Gui, Settings:font, s10 c10101f, Trebuchet MS
 
     Gui, Settings:Add, Text, Left w210 yp+35, Other Settings:
@@ -79,7 +68,7 @@ settingsGui() {
     Gui, Settings:Add, Button, xp+100 w85, Cancel
 
     loadSettingsToGui()
-    Gui, show, W500 H400 center, Em-n-en Settings
+    Gui, show, W500 H400 center, Manifold Date Settings
 }
 ; GUI Actions
 settingsButtonOk() {
@@ -94,17 +83,13 @@ settingsButtonApply(){
 }
 loadSettingsToGui(){
     global
-    GuiControl, Settings:, check_modifier_method, % settings["mod"][3]
     GuiControl, Settings:, check_inline_method, % settings["inl"][3]
-    GuiControl, Settings:, check_hard_replace_method, % settings["hrd"][3]
     GuiControl, Settings:, check_start_with_windows, % settings["sww"][3]
 }
 pullSettingsFromGui(){
     global
     Gui, Settings:Submit, NoHide
-    settings["mod"][3] := check_modifier_method
     settings["inl"][3] := check_inline_method
-    settings["hrd"][3] := check_hard_replace_method
     settings["sww"][3] := check_start_with_windows
     save()
     update_sww_state(settings["sww"][3])
@@ -193,30 +178,6 @@ reset(){
     ExitApp
 }
 
-
-; "En Dash" code point is {U+2013} and "Em Dash" code point is {U+2014}
-
-#If, settings["mod"][3]
-^+-::
-Send {U+2013}
-return
-
-#If, settings["mod"][3]
-^!+-::
-Send {U+2014}
-return
-
-#If, settings["inl"][3]
-:*?:--=::
-Send {U+2013}
-return
-
-#If, settings["inl"][3]
-:*?:==-::
-Send {U+2014}
-return
-
-#If, settings["hrd"][3]
-:*:-::
-Send {U+2013}
-return
+:*?:ymd-::
+FormatTime, CurrDate, A_now, yyyy-MM-dd
+Send, %CurrDate%
